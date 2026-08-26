@@ -30,6 +30,14 @@ const el = document.getElementById('tsr-root');
 createEngine().typeset(document.getElementById('tsr-src').textContent, el, {
   fontFamily: '"Crimson Text", Georgia, serif',
   cjkFontFamily: '"Noto Serif SC", "Noto Serif CJK SC", "Source Han Serif SC", serif',
+  // declared fonts (pages-design.md §1): the worker loads these into its own
+  // FontFaceSet before measuring — measure == paint, no settle to observe.
+  // CJK stays a paint-side webfont: hanzi advances are 1em in every face.
+  fonts: [
+    { family: 'Crimson Text', src: '/fonts/crimson-400.woff2' },
+    { family: 'Crimson Text', src: '/fonts/crimson-400i.woff2', style: 'italic' },
+    { family: 'Crimson Text', src: '/fonts/crimson-700.woff2', weight: '700' },
+  ],
   progressive: false,
 }).catch((e) => console.warn('tsr hydrate failed; static page stands', e));
 </script>`;

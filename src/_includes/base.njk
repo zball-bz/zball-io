@@ -5,7 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% if title %}{{ title }} · {% endif %}zball</title>
 <link rel="alternate" type="application/atom+xml" href="/feed.xml" title="zball">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Noto+Serif+SC:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap">
+<style>
+/* Latin face is SELF-HOSTED and declared to the engine (pages-design.md §1):
+   the worker measures with the exact same files the page paints with. */
+@font-face { font-family: 'Crimson Text'; src: url('/fonts/crimson-400.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: block; }
+@font-face { font-family: 'Crimson Text'; src: url('/fonts/crimson-400i.woff2') format('woff2');
+  font-weight: 400; font-style: italic; font-display: block; }
+@font-face { font-family: 'Crimson Text'; src: url('/fonts/crimson-700.woff2') format('woff2');
+  font-weight: 700; font-style: normal; font-display: block; }
+</style>
 <style>
 :root { --paper:#faf8f2; --ink:#1c1a17; --muted:#8a857c; --line:#e4dfd4; --accent:#1a5276; }
 @media (prefers-color-scheme: dark) {
