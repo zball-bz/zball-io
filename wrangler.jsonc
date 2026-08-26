@@ -1,0 +1,14 @@
+// zball.io — Cloudflare Workers static assets (assets-only worker).
+{
+  "name": "zball-io",
+  "compatibility_date": "2026-08-01",
+  "assets": {
+    "directory": "./_site",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  "routes": [
+    { "pattern": "zball.io", "custom_domain": true },
+    { "pattern": "www.zball.io", "custom_domain": true }
+  ]
+}

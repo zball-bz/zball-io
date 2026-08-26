@@ -1,0 +1,13 @@
+---
+layout: base.njk
+---
+<ul style="list-style:none">
+{% for post in collections.post | reverse %}
+  <li style="display:flex;justify-content:space-between;align-items:baseline;
+             padding:.55em 0;border-bottom:1px dashed var(--line)">
+    <a href="{{ post.url }}" style="text-decoration:none">{{ post.data.title }}</a>
+    <span style="color:var(--muted);font-size:.85em;white-space:nowrap;margin-left:1em">
+      {{ post.date | postDate }}</span>
+  </li>
+{% endfor %}
+</ul>

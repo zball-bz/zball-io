@@ -1,0 +1,29 @@
+---
+title: 用自己的排版引擎写博客
+date: 2026-08-26
+---
+= 用自己的排版引擎写博客 <intro>
+
+这是 zball.io 的第一篇文章，也是一次自举：你正在读的每一行，都由我们自研的 TeX 级排版引擎排出。构建期它生成语义 HTML——编号、引用、代码高亮全部就位；浏览器端再渐进升级为逐字形定位的排版渲染，Knuth–Plass 断行、中西文混排 k-rule、标点挤压一并生效。
+
+== 它能做什么 <what>
+
+行内公式随文断行，如 $e^(i pi) + 1 = 0$ 或 $sum_(k=1)^n k = (n(n+1))/2$；显示公式带编号并可引用：
+
+$ int_(-oo)^oo e^(-x^2) d x = sqrt(pi) $ <gauss>
+
+如@gauss所示，公式编号与图表编号同源。代码由构建期的 tree-sitter 文法高亮——正经 GLR，不是正则：
+
+```js
+// 静态页与排版页共用同一套 token
+const memo = new Map();
+function fib(n) {
+  if (n <= 1) return n;
+  if (!memo.has(n)) memo.set(n, fib(n - 1) + fib(n - 2));
+  return memo.get(n);
+}
+```
+
+== 接下来 <next>
+
+插图与环绕、三盒代码块、分页打印这些能力会在后面的文章里逐一展示；引擎本身的设计记录在 @intro 提到的仓库文档里。

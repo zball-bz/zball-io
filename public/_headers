@@ -1,0 +1,6 @@
+# engine assets are version-prefixed (assets/eng-<sha>/...): a new engine
+# changes every URL, so immutable is safe — repeat visits skip the network
+/assets/eng-*
+  Cache-Control: public, max-age=31536000, immutable
+/feed.xml
+  Content-Type: application/atom+xml; charset=utf-8
