@@ -13,34 +13,84 @@ const engPkg = JSON.parse(await readFile('./vendor/typesetter/package.json', 'ut
 const ENG = `/assets/eng-${engPkg.version.replace(/^0\.0\.0-/, '')}`;
 
 export default function (eleventyConfig) {
+  // bilingual posts (in-page switch): xxx.tsm (zh) + optional sibling
+  // xxx.en.tsm (translation, no front matter). Both semantic versions ship
+  // in the page; each language typesets lazily in its own engine instance.
+  eleventyConfig.ignores.add('src/posts/*.en.tsm');
   eleventyConfig.addTemplateFormats('tsm');
   eleventyConfig.addExtension('tsm', {
     outputFileExtension: 'html',
-    compile: async function (inputContent) {
+    compile: async function (inputContent, inputPath) {
       const { html, diags, ok } = await renderTsm(inputContent);
       if (!ok) throw new Error('tsm render failed:\n' + diags);
       if (diags.trim()) console.warn('[tsm]', diags.trim());
-      // self-contained: semantic article + embedded source + hydration call
-      const src = inputContent.replace(/<\/script/gi, '<\\/script');
-      const body = `<article class="post" id="tsr-root">\n${html}</article>
-<script type="text/plain" id="tsr-src">${src}</script>
-<script type="module">
-import { createEngine } from '${ENG}/runtime/src/main/shell.mjs';
-const el = document.getElementById('tsr-root');
-createEngine().typeset(document.getElementById('tsr-src').textContent, el, {
-  fontFamily: '"Crimson Text", Georgia, serif',
-  cjkFontFamily: '"Noto Serif SC", "Noto Serif CJK SC", "Source Han Serif SC", serif',
-  // declared fonts (pages-design.md §1): the worker loads these into its own
-  // FontFaceSet before measuring — measure == paint, no settle to observe.
-  // CJK stays a paint-side webfont: hanzi advances are 1em in every face.
-  fonts: [
-    { family: 'Crimson Text', src: '/fonts/crimson-400.woff2' },
-    { family: 'Crimson Text', src: '/fonts/crimson-400i.woff2', style: 'italic' },
-    { family: 'Crimson Text', src: '/fonts/crimson-700.woff2', weight: '700' },
-  ],
-  progressive: false,
-}).catch((e) => console.warn('tsr hydrate failed; static page stands', e));
-</script>`;
+      let enHtml = null, enSrc = null;
+      try {
+        enSrc = await readFile(inputPath.replace(/\.tsm$/, '.en.tsm'), 'utf8');
+      } catch { /* no translation */ }
+      if (enSrc !== null) {
+        const en = await renderTsm(enSrc);
+        if (!en.ok) throw new Error('en.tsm render failed:\n' + en.diags);
+        if (en.diags.trim()) console.warn('[tsm:en]', en.diags.trim());
+        enHtml = en.html;
+      }
+      const esc = (t) => t.replace(/<\/script/gi, '<\\/script');
+      const switchUi = enHtml === null ? '' : [
+        '<div class="lang-switch" role="group" aria-label="language">',
+        '<button data-zblang="zh" class="on">中文</button>',
+        '<button data-zblang="en">EN</button></div>\n',
+      ].join('');
+      const enBlock = enHtml === null ? '' : [
+        '<article class="post" data-zblang="en" lang="en" hidden>\n',
+        enHtml, '</article>\n',
+        '<script type="text/plain" id="tsr-src-en">', esc(enSrc), '</script>\n',
+      ].join('');
+      // the hydration module is plain source (no nested template literals):
+      // per-language engines, lazy typeset, localStorage preference
+      const script = [
+        `import { createEngine } from '${ENG}/runtime/src/main/shell.mjs';`,
+        `const engines = {};`,
+        `const opts = (lang) => ({`,
+        `  fontFamily: '"Crimson Text", Georgia, serif',`,
+        `  cjkFontFamily: '"Noto Serif SC", "Noto Serif CJK SC", "Source Han Serif SC", serif',`,
+        `  lang: lang === 'en' ? 'en' : 'zh-CN',`,
+        `  fonts: [`,
+        `    { family: 'Crimson Text', src: '/fonts/crimson-400.woff2' },`,
+        `    { family: 'Crimson Text', src: '/fonts/crimson-400i.woff2', style: 'italic' },`,
+        `    { family: 'Crimson Text', src: '/fonts/crimson-700.woff2', weight: '700' },`,
+        `  ],`,
+        `  progressive: false,`,
+        `});`,
+        `const hydrate = (lang) => {`,
+        `  const el = document.querySelector('article[data-zblang="' + lang + '"]');`,
+        `  const src = document.getElementById('tsr-src-' + lang);`,
+        `  if (!el || !src || engines[lang]) return;`,
+        `  engines[lang] = createEngine();`,
+        `  engines[lang].typeset(src.textContent, el, opts(lang))`,
+        `    .catch((e) => console.warn('tsr hydrate failed; static page stands', e));`,
+        `};`,
+        `const activate = (lang) => {`,
+        `  for (const a of document.querySelectorAll('article[data-zblang]'))`,
+        `    a.hidden = a.dataset.zblang !== lang;`,
+        `  for (const b of document.querySelectorAll('.lang-switch button'))`,
+        `    b.classList.toggle('on', b.dataset.zblang === lang);`,
+        `  try { localStorage.setItem('zb-lang', lang); } catch {}`,
+        `  hydrate(lang);`,
+        `};`,
+        `for (const b of document.querySelectorAll('.lang-switch button'))`,
+        `  b.addEventListener('click', () => activate(b.dataset.zblang));`,
+        `let start = 'zh';`,
+        `try {`,
+        `  if (localStorage.getItem('zb-lang') === 'en' &&`,
+        `      document.querySelector('article[data-zblang="en"]')) start = 'en';`,
+        `} catch {}`,
+        `activate(start);`,
+      ].join('\n');
+      const body = switchUi +
+        '<article class="post" data-zblang="zh">\n' + html + '</article>\n' +
+        enBlock +
+        '<script type="text/plain" id="tsr-src-zh">' + esc(inputContent) + '</script>\n' +
+        '<script type="module">\n' + script + '\n</script>';
       return async () => body;
     },
   });

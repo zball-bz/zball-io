@@ -31,6 +31,13 @@ header.site .brand { font-weight:700; font-size:1.15em; letter-spacing:.02em;
   color:var(--ink); text-decoration:none; }
 header.site nav a { color:var(--muted); text-decoration:none; margin-left:1.2em; font-size:.92em; }
 header.site nav a:hover { color:var(--accent); }
+.lang-switch { display:flex; justify-content:flex-end; margin:0 0 1em;
+  position:relative; z-index:5; }
+.lang-switch button { font:inherit; font-size:.8em; padding:.1em .6em; cursor:pointer;
+  background:none; color:var(--muted); border:1px solid var(--line); }
+.lang-switch button:first-child { border-radius:3px 0 0 3px; border-right:none; }
+.lang-switch button:last-child { border-radius:0 3px 3px 0; }
+.lang-switch button.on { color:var(--paper); background:var(--accent); border-color:var(--accent); }
 footer.site { border-top:1px solid var(--line); margin-top:3.5em; padding-top:1em;
   color:var(--muted); font-size:.85em; }
 a { color:var(--accent); }

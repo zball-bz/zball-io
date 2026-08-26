@@ -4,3 +4,9 @@
   Cache-Control: public, max-age=31536000, immutable
 /feed.xml
   Content-Type: application/atom+xml; charset=utf-8
+# HTML pages revalidate on every visit (deploys must never serve stale pages;
+# the heavy engine assets above stay immutable)
+/
+  Cache-Control: public, max-age=0, must-revalidate
+/p/*
+  Cache-Control: public, max-age=0, must-revalidate
