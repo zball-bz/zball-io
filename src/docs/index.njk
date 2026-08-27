@@ -1,0 +1,17 @@
+---
+layout: base.njk
+title: Typesetter 文档
+permalink: /docs/
+eleventyExcludeFromCollections: true
+tags: []
+---
+<p style="color:var(--muted);margin-bottom:1.2em">Typesetter 标记语言（<code>.tsm</code>）的使用文档——本站每一页都由它排出。</p>
+<ol style="list-style:none;padding:0">
+{% for doc in collections.doc | sort(false, false, 'data.order') %}
+  <li style="display:flex;justify-content:space-between;align-items:baseline;
+             padding:.55em 0;border-bottom:1px dashed var(--line)">
+    <a href="{{ doc.url }}" style="text-decoration:none">
+      <span style="color:var(--muted);margin-right:.7em">{{ doc.data.order }}</span>{{ doc.data.title }}</a>
+  </li>
+{% endfor %}
+</ol>

@@ -35,10 +35,13 @@ export default function (eleventyConfig) {
         enHtml = en.html;
       }
       const esc = (t) => t.replace(/<\/script/gi, '<\\/script');
-      const switchUi = enHtml === null ? '' : [
-        '<div class="lang-switch" role="group" aria-label="language">',
-        '<button data-zblang="zh" class="on">中文</button>',
-        '<button data-zblang="en">EN</button></div>\n',
+      const switchUi = [
+        '<div class="lang-switch" role="group" aria-label="tools">',
+        enHtml === null ? ''
+          : '<button data-zblang="zh" class="on">中文</button>' +
+            '<button data-zblang="en">EN</button>',
+        '<button class="print-btn" title="分页打印 / 导出 PDF" disabled>打印</button>',
+        '</div>\n',
       ].join('');
       const enBlock = enHtml === null ? '' : [
         '<article class="post" data-zblang="en" lang="en" hidden>\n',
@@ -61,15 +64,24 @@ export default function (eleventyConfig) {
         `  ],`,
         `  progressive: false,`,
         `});`,
+        `const handles = {};`,
+        `let current = 'zh';`,
+        `const printBtn = document.querySelector('.print-btn');`,
         `const hydrate = (lang) => {`,
         `  const el = document.querySelector('article[data-zblang="' + lang + '"]');`,
         `  const src = document.getElementById('tsr-src-' + lang);`,
         `  if (!el || !src || engines[lang]) return;`,
         `  engines[lang] = createEngine();`,
-        `  engines[lang].typeset(src.textContent, el, opts(lang))`,
+        `  handles[lang] = engines[lang].typeset(src.textContent, el, opts(lang))`,
+        `    .then((h) => { if (printBtn) printBtn.disabled = false; return h; })`,
         `    .catch((e) => console.warn('tsr hydrate failed; static page stands', e));`,
         `};`,
+        `printBtn?.addEventListener('click', async () => {`,
+        `  const h = await handles[current];`,
+        `  if (h) h.print({ title: document.title });`,
+        `});`,
         `const activate = (lang) => {`,
+        `  current = lang;`,
         `  for (const a of document.querySelectorAll('article[data-zblang]'))`,
         `    a.hidden = a.dataset.zblang !== lang;`,
         `  for (const b of document.querySelectorAll('.lang-switch button'))`,
