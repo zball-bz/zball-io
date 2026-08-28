@@ -31,6 +31,9 @@ header.site .brand { font-weight:700; font-size:1.15em; letter-spacing:.02em;
   color:var(--ink); text-decoration:none; }
 header.site nav a { color:var(--muted); text-decoration:none; margin-left:1.2em; font-size:.92em; }
 header.site nav a:hover { color:var(--accent); }
+/* static (no-JS) page mirrors the engine's 中文段首缩进 */
+article[lang="zh-CN"] .tsr-flow p { text-indent: 2em; }
+article[lang="zh-CN"] .tsr-flow li > p, article[lang="zh-CN"] .tsr-flow figcaption { text-indent: 0; }
 .lang-switch { display:flex; justify-content:flex-end; gap:.45em; margin:0 0 1em;
   position:relative; z-index:5; }
 .lang-switch button { font:inherit; font-size:.8em; padding:.15em .65em; cursor:pointer;

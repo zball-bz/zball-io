@@ -65,6 +65,7 @@ export default function (eleventyConfig) {
         `  fontFamily: '"Crimson Text", Georgia, serif',`,
         `  cjkFontFamily: '"Noto Serif SC", "Noto Serif CJK SC", "Source Han Serif SC", serif',`,
         `  lang: lang === 'en' ? 'en' : 'zh-CN',`,
+        `  paraIndentEm: lang === 'en' ? 0 : 2,  // 中文段首缩进两字`,
         `  fonts: [`,
         `    { family: 'Crimson Text', src: '/fonts/crimson-400.woff2' },`,
         `    { family: 'Crimson Text', src: '/fonts/crimson-400i.woff2', style: 'italic' },`,
