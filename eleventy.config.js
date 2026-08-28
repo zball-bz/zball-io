@@ -3,6 +3,7 @@
 // static tree-sitter highlighting (vendor/typesetter, the engine's rolling
 // dist), progressively upgraded to the full typeset rendering client-side.
 import { readFile } from 'node:fs/promises';
+import { dirname } from 'node:path';
 import { feedPlugin } from '@11ty/eleventy-plugin-rss';
 import { renderTsm } from './vendor/typesetter/runtime/src/node/render.mjs';
 import { TSR_CSS, TSR_CJK_FONT } from './vendor/typesetter/runtime/src/main/shell.mjs';
@@ -21,7 +22,14 @@ export default function (eleventyConfig) {
   eleventyConfig.addExtension('tsm', {
     outputFileExtension: 'html',
     compile: async function (inputContent, inputPath) {
-      const { html, diags, ok } = await renderTsm(inputContent);
+      // document language from front matter (lang: en) — supplement words
+      // (Figure/图) and the client engine follow it; resources such as
+      // #bibliography(src) resolve against the document and the site root
+      const raw = await readFile(inputPath, 'utf8');
+      const fm = /^---\n([\s\S]*?)\n---/.exec(raw)?.[1] ?? '';
+      const mainLang = /^lang:\s*(\S+)/m.exec(fm)?.[1] ?? 'zh';
+      const res = { baseDir: dirname(inputPath), rootDir: 'public' };
+      const { html, diags, ok } = await renderTsm(inputContent, { ...res, lang: mainLang === 'zh' ? 'zh-CN' : mainLang });
       if (!ok) throw new Error('tsm render failed:\n' + diags);
       if (diags.trim()) console.warn('[tsm]', diags.trim());
       let enHtml = null, enSrc = null;
@@ -29,7 +37,7 @@ export default function (eleventyConfig) {
         enSrc = await readFile(inputPath.replace(/\.tsm$/, '.en.tsm'), 'utf8');
       } catch { /* no translation */ }
       if (enSrc !== null) {
-        const en = await renderTsm(enSrc);
+        const en = await renderTsm(enSrc, { ...res, lang: 'en' });
         if (!en.ok) throw new Error('en.tsm render failed:\n' + en.diags);
         if (en.diags.trim()) console.warn('[tsm:en]', en.diags.trim());
         enHtml = en.html;
@@ -65,7 +73,7 @@ export default function (eleventyConfig) {
         `  progressive: false,`,
         `});`,
         `const handles = {};`,
-        `let current = 'zh';`,
+        `let current = ${JSON.stringify(mainLang)};`,
         `const printBtn = document.querySelector('.print-btn');`,
         `const hydrate = (lang) => {`,
         `  const el = document.querySelector('article[data-zblang="' + lang + '"]');`,
@@ -91,17 +99,17 @@ export default function (eleventyConfig) {
         `};`,
         `for (const b of document.querySelectorAll('.lang-switch button[data-zblang]'))`,
         `  b.addEventListener('click', () => activate(b.dataset.zblang));`,
-        `let start = 'zh';`,
+        `let start = ${JSON.stringify(mainLang)};`,
         `try {`,
-        `  if (localStorage.getItem('zb-lang') === 'en' &&`,
-        `      document.querySelector('article[data-zblang="en"]')) start = 'en';`,
+        `  const pref = localStorage.getItem('zb-lang');`,
+        `  if (pref && pref !== start && document.querySelector('article[data-zblang="' + pref + '"]')) start = pref;`,
         `} catch {}`,
         `activate(start);`,
       ].join('\n');
       const body = switchUi +
-        '<article class="post" data-zblang="zh">\n' + html + '</article>\n' +
+        `<article class="post" data-zblang="${mainLang}" lang="${mainLang === 'zh' ? 'zh-CN' : mainLang}">\n` + html + '</article>\n' +
         enBlock +
-        '<script type="text/plain" id="tsr-src-zh">' + esc(inputContent) + '</script>\n' +
+        `<script type="text/plain" id="tsr-src-${mainLang}">` + esc(inputContent) + '</script>\n' +
         '<script type="module">\n' + script + '\n</script>';
       return async () => body;
     },
