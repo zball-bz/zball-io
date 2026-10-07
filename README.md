@@ -16,4 +16,10 @@ npx @11ty/eleventy --serve            # 本地写作
 git push                              # CI 构建并部署到 zball.io
 ```
 
-写文章：`src/posts/xxx.tsm`，front matter 需 `title` 与 `date`。
+写文章：`src/posts/xxx.tsm`，front matter 需 `title` 与 `date`；英文译文放在同目录的
+`xxx.en.tsm`（无 front matter），与原文同页切换。文档语言由引擎判定（文档自己的
+`$.doc({lang})`，否则按正文检测）。
+
+站点给引擎的设置（字体、按语言追加的设置如中文段首缩进）在 `eleventy.config.js` 的
+`SITE` / `BY_LANG`，构建与浏览器端用同一份；引擎的样式表（渲染契约、主题、各文档的规则）
+随页面输出，不在 `base.njk` 里手写。

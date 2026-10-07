@@ -31,9 +31,6 @@ header.site .brand { font-weight:700; font-size:1.15em; letter-spacing:.02em;
   color:var(--ink); text-decoration:none; }
 header.site nav a { color:var(--muted); text-decoration:none; margin-left:1.2em; font-size:.92em; }
 header.site nav a:hover { color:var(--accent); }
-/* static (no-JS) page mirrors the engine's 中文段首缩进 */
-article[lang="zh-CN"] .tsr-flow p { text-indent: 2em; }
-article[lang="zh-CN"] .tsr-flow li > p, article[lang="zh-CN"] .tsr-flow figcaption { text-indent: 0; }
 .lang-switch { display:flex; justify-content:flex-end; gap:.45em; margin:0 0 1em;
   position:relative; z-index:5; }
 .lang-switch button { font:inherit; font-size:.8em; padding:.15em .65em; cursor:pointer;
@@ -44,8 +41,6 @@ article[lang="zh-CN"] .tsr-flow li > p, article[lang="zh-CN"] .tsr-flow figcapti
 footer.site { border-top:1px solid var(--line); margin-top:3.5em; padding-top:1em;
   color:var(--muted); font-size:.85em; }
 a { color:var(--accent); }
-{{ tsrCss | safe }}
-.post { --tsr-cjk-font: 'Noto Serif SC','Noto Serif CJK SC','Source Han Serif SC',serif; }
 .post .tsr-flow img { max-width:100%; height:auto; }
 .post .tsr-flow pre { overflow-x:auto; background:rgba(125,125,125,.06);
   padding:.7em .9em; border-radius:4px; font-size:.85em; line-height:1.55; }
@@ -55,6 +50,12 @@ a { color:var(--accent); }
 .post .tsr-flow p { margin:.8em 0; }
 .post .tsr-flow blockquote { border-left:3px solid var(--line); padding-left:1em; color:var(--muted); }
 </style>
+{%- if tsr %}
+<style>
+/* the engine's stylesheet: its render contract and theme, each document's
+   rules under its own article (eleventy.config.js headOf) */
+{{ tsr.head | safe }}</style>
+{%- endif %}
 </head>
 <body>
 <div class="shell">

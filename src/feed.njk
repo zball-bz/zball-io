@@ -1,0 +1,31 @@
+---
+permalink: /feed.xml
+eleventyExcludeFromCollections: true
+metadata:
+  title: zball
+  subtitle: TeX 级网页排版引擎驱动的博客
+  language: zh-CN
+  base: https://zball.io/
+  author: zball
+---
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="{{ metadata.language }}">
+  <title>{{ metadata.title }}</title>
+  <subtitle>{{ metadata.subtitle }}</subtitle>
+  <link href="{{ permalink | absoluteUrl(metadata.base) }}" rel="self" />
+  <link href="{{ metadata.base }}" />
+  <updated>{{ collections.post | getNewestCollectionItemDate | dateToRfc3339 }}</updated>
+  <id>{{ metadata.base }}</id>
+  <author><name>{{ metadata.author }}</name></author>
+  {%- for post in collections.post | reverse %}{% if loop.index0 < 20 %}
+  {%- set absolutePostUrl = post.url | absoluteUrl(metadata.base) %}
+  <entry>
+    <title>{{ post.data.title }}</title>
+    <link href="{{ absolutePostUrl }}" />
+    <updated>{{ post.date | dateToRfc3339 }}</updated>
+    <id>{{ absolutePostUrl }}</id>
+    {#- the engine's feed rendering: formulas as their source, no script #}
+    <content type="html" xml:lang="{{ post.data.tsr.lang }}">{{ post.data.tsr.feed | htmlToAbsoluteUrls(absolutePostUrl) }}</content>
+  </entry>
+  {%- endif %}{% endfor %}
+</feed>
