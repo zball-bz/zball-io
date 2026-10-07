@@ -1,0 +1,5 @@
+# the docs are a book now (books/typesetter, zball-bz/typesetter-book)
+/docs /books/typesetter/ 301
+/docs/ /books/typesetter/ 301
+/docs/:page /books/typesetter/:page 301
+/docs/:page/ /books/typesetter/:page 301

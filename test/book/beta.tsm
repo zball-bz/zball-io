@@ -1,0 +1,7 @@
+= 第二章 <ch-b>
+
+== 二节 <sec-b1>
+
+$ x = y $ <eq-b>
+
+回看 @eq-a 与 @fig-a，以及 #link({target: "sec-a1"})[第一章的一节]。

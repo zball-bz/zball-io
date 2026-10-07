@@ -1,0 +1,11 @@
+{
+  "files": ["index.tsm", "preface.tsm", "alpha.tsm", "beta.tsm", "gamma.tsm"],
+  "continue": ["heading", "figure", "table", "equation"],
+  "book": {
+    "title": "测试书",
+    "subtitle": "书籍栏目的验收样例（不发布）",
+    "lang": "zh",
+    "status": { "preface": "published", "alpha": "published", "beta": "published" },
+    "parts": [{ "title": "基础", "chapters": ["alpha", "beta"] }]
+  }
+}

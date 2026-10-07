@@ -1,0 +1,36 @@
+# Publish a book's latest: books/<slug> (a submodule) moved to its branch's
+# head and committed, then the site deployed. (A push by this workflow's
+# token starts no workflow, so it starts deploy itself.)
+name: book-update
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: the book (books/<slug>)
+        required: true
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: move the submodule and commit
+        env:
+          SLUG: ${{ inputs.slug }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          case "$SLUG" in ''|*[!a-z0-9-]*) echo "not a slug: $SLUG"; exit 1;; esac
+          test -f "books/$SLUG/tsm.project.json" || { echo "books/$SLUG is not a book"; exit 1; }
+          git submodule update --remote "books/$SLUG"
+          if git diff --quiet; then echo "books/$SLUG is at its latest"; exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -am "books/$SLUG: $(git -C "books/$SLUG" log -1 --format='%h %s')"
+          git push
+          gh workflow run deploy.yml --ref main
