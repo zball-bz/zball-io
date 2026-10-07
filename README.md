@@ -20,6 +20,9 @@ git push                              # CI 构建并部署到 zball.io
 `xxx.en.tsm`（无 front matter），与原文同页切换。文档语言由引擎判定（文档自己的
 `$.doc({lang})`，否则按正文检测）。
 
+字体都自托管在 `public/fonts`：正文 Crimson Text，代码 IBM Plex Mono（SIL OFL 1.1，授权见 `public/fonts/IBM-Plex-OFL.txt`）；
+它们同时声明给引擎（`lib/tsr.mjs` 的 `FONTS`），排版测量与页面绘制用的是同一批文件。
+
 站点给引擎的设置（字体、按语言追加的设置如中文段首缩进）在 `lib/tsr.mjs` 的
 `SITE` / `BY_LANG`，构建与浏览器端用同一份；引擎的样式表（渲染契约、主题、各文档的规则）
 随页面输出，不在 `base.njk` 里手写。
