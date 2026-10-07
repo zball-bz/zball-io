@@ -1,5 +1,6 @@
 ---
 layout: base.njk
+shell: book
 pagination:
   data: books.pages
   size: 1
@@ -8,9 +9,16 @@ permalink: "{{ bp.permalink }}"
 eleventyComputed:
   title: "{{ bp.title }}"
 ---
+<div class="book">
+<aside class="book-toc" id="book-toc" data-zb-persist="book:{{ bp.book.slug }}">
+{{ bp.toc | safe }}
+</aside>
+<div class="book-backdrop" data-zb-toggle="toc"></div>
+<div class="book-main">
 <nav class="book-crumbs">
+  <button class="toc-toggle" data-zb-toggle="toc" aria-controls="book-toc" title="目录">目录</button>
   {%- if bp.home %}<a href="/books/">书</a>
-  {%- else %}<a href="{{ bp.book.url }}">{{ bp.book.title }}</a>{% if bp.part %} › {{ bp.part }}{% endif %}
+  {%- else %}<span><a href="{{ bp.book.url }}">{{ bp.book.title }}</a>{% if bp.part %} › {{ bp.part }}{% endif %}</span>
   {%- endif %}</nav>
 {%- if bp.draft %}
 <p class="book-draft">草稿：本章尚未定稿，内容还会变动。</p>
@@ -22,3 +30,5 @@ eleventyComputed:
   {%- if bp.next %}<a class="next" href="{{ bp.next.url }}">{{ bp.next.title }} →</a>{% endif %}
 </nav>
 {%- endif %}
+</div>
+</div>

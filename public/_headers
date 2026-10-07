@@ -10,3 +10,8 @@
   Cache-Control: public, max-age=0, must-revalidate
 /p/*
   Cache-Control: public, max-age=0, must-revalidate
+/books/*
+  Cache-Control: public, max-age=0, must-revalidate
+# the page runtime: its URL carries its content's hash (?v=)
+/js/*
+  Cache-Control: public, max-age=31536000, immutable

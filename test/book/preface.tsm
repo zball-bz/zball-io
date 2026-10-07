@@ -1,4 +1,4 @@
-= 前言 <preface>
-#counterUpdate("heading", {add: -1})
+#use("lib/book.mjs")
+#heading(1, "preface", {role: "front"})[前言]
 
-前言不占章号：标题之后把章计数减回去。正文见 @ch-b。
+前言不占章号：它的标题是书模块声明的 `front` 类，不编号。正文见 @ch-b。

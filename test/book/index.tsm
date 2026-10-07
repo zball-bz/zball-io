@@ -1,15 +1,16 @@
 %--
-The book's home page: no numbered heading (it would take chapter 1's
-number). The contents are references: the engine gives each entry its
-number, title and link; "toc" is a reference form the page declares.
+The book's home page: its title a heading that takes no number (front, the
+book's module). The contents are references: the engine gives each entry
+its number, title and link; "toc" is a reference form the page declares.
 --%
 
+#use("lib/book.mjs")
 #{ $.element('heading', {forms: {toc: [slot('supplement'), slot('number'), ' ', slot('title')]}}) }
-#strong[测试书]
+#heading(1, "home", {role: "front"})[测试书]
 
 一本最小的测试书，只用来验收书籍栏目。
 
-- #ref("preface", {form: "title"})
+- @preface
 - #ref("ch-a", {form: "toc"})
 - #ref("ch-b", {form: "toc"})
 - #ref("ch-c", {form: "toc"})

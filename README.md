@@ -38,5 +38,6 @@ git push                              # CI 构建并部署到 zball.io
   书里引用的文件（图片、`#use` 模块及其 import、参考文献）复制到 `/books/<slug>/` 下的同一相对路径。
 - 构建失败的条件：任何文档渲染出错；资源用了站点根路径或指向书根之外；首页有带编号的标题；
   已发布的章里有未解析的引用、缺失的资源、重复的标签，或加载失败的模块。草稿章只给警告。
+- 阅读：左侧是全书目录（来自引擎的 `contents` 产物），正文栏 40em；全站的站内链接都在页内切换，取目标页、排好再换上，没有闪烁（`lib/client/zb.mjs`，详见 `docs/books.md` §9）。
 - `test/book/` 是验收用的测试书，不发布；CI 每次都用它构建一遍（输出不部署）：
   `ZB_BOOK_test=test/book npx @11ty/eleventy --output=/tmp/books-check`。

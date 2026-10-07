@@ -6,7 +6,8 @@
 // client-side with the bundle's own settings (vendor/typesetter: the
 // engine's rolling dist; lib/tsr.mjs: the site's side of it). Books — a
 // project of .tsm files in a repository of its own — are lib/books.mjs.
-import { existsSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { existsSync, readFileSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import rssPlugin from '@11ty/eleventy-plugin-rss';
@@ -15,6 +16,13 @@ import { BY_LANG, ENG, FONTS, SITE, merge, pageParts, primary, report } from './
 import { bookRoots, copyBookAssets, loadBooks } from './lib/books.mjs';
 
 const PUBLIC = 'public';
+// The page runtime (lib/client/zb.mjs: typesetting, pages shown in place),
+// its URL versioned by its content; with the engine's assets and faces it
+// is what a page tells the runtime (#zb-site) — a page of another deploy is
+// loaded whole
+const RUNTIME = 'lib/client/zb.mjs';
+const runtimeVersion = createHash('sha256').update(readFileSync(RUNTIME)).digest('hex').slice(0, 10);
+const ZB = { eng: ENG, fonts: FONTS, js: `/js/zb.mjs?v=${runtimeVersion}` };
 
 // The images a document references must be served: a site-root path is a
 // file under public/; a relative one would resolve against the page's URL,
@@ -94,8 +102,10 @@ export default function (eleventyConfig) {
   // hyphenation patterns, the math font): the runtime's relative imports hold
   eleventyConfig.addPassthroughCopy({
     'vendor/typesetter': ENG.slice(1),
+    [RUNTIME]: 'js/zb.mjs',
     [PUBLIC]: '/',
   });
+  eleventyConfig.addGlobalData('zb', ZB);
 
   // feed.njk: the filters (dates, absolute URLs)
   eleventyConfig.addPlugin(rssPlugin);
