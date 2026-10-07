@@ -1,0 +1,4 @@
+= 前言 <preface>
+#counterUpdate("heading", {add: -1})
+
+前言不占章号：标题之后把章计数减回去。正文见 @ch-b。

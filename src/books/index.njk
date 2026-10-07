@@ -1,0 +1,15 @@
+---
+layout: base.njk
+title: 书
+permalink: /books/
+---
+{%- if books.list.length %}
+<ul class="book-list">
+{%- for b in books.list %}
+  <li><a href="{{ b.url }}">{{ b.title }}</a>{% if b.subtitle %} <span class="sub">{{ b.subtitle }}</span>{% endif %}
+    <div class="count">已发布 {{ b.published }} 章{% if b.chapters > b.published %}（共 {{ b.chapters }} 章）{% endif %}</div></li>
+{%- endfor %}
+</ul>
+{%- else %}
+<p style="color:var(--muted)">还没有书。</p>
+{%- endif %}

@@ -1,0 +1,15 @@
+= 第一章 <ch-a>
+
+#use("lib/book.mjs")
+
+== 一节 <sec-a1>
+
+见 @sec-b1 与 @eq-b。图 @fig-a。引用 @knuth84。
+
+#bibliography("data/refs.json")
+
+#!figure(src: "fig/a.svg", alt: "a", label: "fig-a")
+一张图。
+#figure!
+
+$ a + b = c $ <eq-a>

@@ -1,0 +1,24 @@
+---
+layout: base.njk
+pagination:
+  data: books.pages
+  size: 1
+  alias: bp
+permalink: "{{ bp.permalink }}"
+eleventyComputed:
+  title: "{{ bp.title }}"
+---
+<nav class="book-crumbs">
+  {%- if bp.home %}<a href="/books/">书</a>
+  {%- else %}<a href="{{ bp.book.url }}">{{ bp.book.title }}</a>{% if bp.part %} › {{ bp.part }}{% endif %}
+  {%- endif %}</nav>
+{%- if bp.draft %}
+<p class="book-draft">草稿：本章尚未定稿，内容还会变动。</p>
+{%- endif %}
+{{ bp.tsr.body | safe }}
+{%- if bp.prev or bp.next %}
+<nav class="book-pager">
+  {%- if bp.prev %}<a class="prev" href="{{ bp.prev.url }}">← {{ bp.prev.title }}</a>{% endif %}
+  {%- if bp.next %}<a class="next" href="{{ bp.next.url }}">{{ bp.next.title }} →</a>{% endif %}
+</nav>
+{%- endif %}
