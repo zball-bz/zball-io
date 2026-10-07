@@ -203,3 +203,16 @@ fig/ lib/ data/ …    资源；文档里一律用相对路径引用（fig/x.svg
 - 文章宽 720px，侧栏 270px；手机宽度下抽屉开合正常。
 - 站内切换始终是同一个文档，侧栏是同一个节点；每次换上时文章都已排好；文档页 250–450ms 换上。
 - 例外：图片全部来自外站的页面（活字印刷示例，6 张 Wikimedia 图片），引擎要先取图片尺寸，超过 3 秒，先显示静态版。
+
+## 10. 第一本书：《Typesetter 使用手册》（2026-10-07）
+
+原来的 `/docs/`（Typesetter 文档）整理成书，作为第一本书发布。
+- 仓库 [zball-bz/typesetter-book](https://github.com/zball-bz/typesetter-book)（公开），子模块 `books/typesetter`，地址 `/books/typesetter/`。
+- 两个部分：“语言”（文档结构与行内标记、数学排版、代码高亮与三盒代码块、图表与打印）与“实例”（HoTT Book 引言、活字印刷術）。首页的书名是书自己声明的不编号标题，目录用书模块声明的 `toc` 引用形式。
+- 改动：
+  - 每章的 `<top>` 改为全书唯一的 `<ch-…>`；“本页／后续各篇”改为对各章的引用（§2、§3、§4）；去掉 Eleventy 的 front matter。
+  - HoTT 引言：声明 `$.doc({lang: "en"})`；它对原书其余部分的 58 处引用（部分、章、节）经原书的清单 `data/hott-book.labels.json` 解析——编号取自原书 LaTeX 源码（按 `\section` 计数，去掉注释与带星号的节）——读作 “Chapter 8”“§2.10”“Part I”，链接到原书主页（`tsm.project.json` 的 `urls.hott-book`）。三级标题提为二级；表格包进带标签的 figure，按全书编号为 Table 2。参考文献移入书内（`data/hott-refs.json`）。
+  - 活字印刷術：加章标题，原有标题降一级（原来每个一级标题都会占一个章号）。
+- 旧地址：`public/_redirects` 把 `/docs/` 与 `/docs/<页>` 301 到书；导航“文档”指向书。
+- Typesetter：`renderProject` 的 `urls` 保留工程之外的文档（书引用的另一本书）——此前这类链接会指向页面旁的 `<key>`。站点只接受这类地址为绝对 http(s) URL。
+- 实测（本地）：七页都在页内切换，65–190ms 换上（活字印刷術 2.4s，外站图片）；HoTT 一章 58 个外链、无 `??`、参考文献齐全；无报错、无 404。

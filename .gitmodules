@@ -1,0 +1,3 @@
+[submodule "books/typesetter"]
+	path = books/typesetter
+	url = https://github.com/zball-bz/typesetter-book.git

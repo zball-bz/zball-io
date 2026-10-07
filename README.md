@@ -26,7 +26,7 @@ git push                              # CI 构建并部署到 zball.io
 
 ## 书
 
-需求与约定见 [`docs/books.md`](docs/books.md)，实现在 `lib/books.mjs`。
+需求与约定见 [`docs/books.md`](docs/books.md)，实现在 `lib/books.mjs`。第一本是《Typesetter 使用手册》（`books/typesetter` ← [zball-bz/typesetter-book](https://github.com/zball-bz/typesetter-book)），即原来的 `/docs/`；旧地址由 `public/_redirects` 跳转。克隆后 `git submodule update --init`。
 
 - 每本书是一个 Typesetter 工程（`tsm.project.json` 加一个 `book` 块），放在自己的公开仓库里，
   以 submodule 挂在 `books/<slug>/`。submodule 指针指向的提交就是线上版本：
