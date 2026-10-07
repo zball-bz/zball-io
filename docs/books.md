@@ -172,4 +172,6 @@ fig/ lib/ data/ …    资源；文档里一律用相对路径引用（fig/x.svg
 3. 图片、`#use` 模块及其 import 的 `lib/util.mjs`、参考文献：静态页和排版后都没有 404（模块的 `$.set` 生效、参考文献列出）。深链接 `/books/test/beta#tsr-eq-b` 在静态页和排版后都在视口内。✓
 4. 草稿章有横幅和 `noindex`；已发布章里放一个坏引用、缺图、重复标签、站点根路径或书外路径时，构建失败并指出文件和原因；同样的问题放在草稿章里只给警告。✓
 5. `ZB_BOOK_<slug>`、`books.local.json` 生效；`--serve` 下改动书外工作副本里的一章，打开的页面自动刷新出新内容，改文章时书不重新渲染。✓
-6. 本地用一个 git 仓库作 submodule 挂到 `books/demo`，构建通过；`book-update` 的脚本逻辑（移动指针、提交、已是最新时不提交、拒绝非法 slug）在本地跑通。CI：见提交记录中的工作流运行。
+6. 本地用一个 git 仓库作 submodule 挂到 `books/demo`，构建通过；`book-update` 的脚本逻辑（移动指针、提交、已是最新时不提交、拒绝非法 slug）在本地跑通。CI：PR #1 的构建（run 37587211678）检出 submodule、用测试书构建出 5 页、构建站点，全部通过，部署按设计跳过。Typesetter 侧的改动在分支 `books-2026-10` 上 CI 全绿（run 37587172485）。✓
+
+**待用户决定**：Typesetter 的 `books-2026-10` 快进到 main（CI 随后发布带新清单的 engine-dist），然后合并 PR #1（即部署）。在此之前，线上的 engine-dist 不列出模块的 import、也不带 `ref`：站点照样能构建，只是不会复制模块自己 import 的文件，也查不出加载用了站点根路径。
